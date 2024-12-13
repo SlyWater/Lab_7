@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <time.h>
+#pragma comment(linker, "/STACK:16777216")
 
 typedef struct node {
     int data;
@@ -117,7 +118,8 @@ void DFS(int** G, int size, int* vis, int s) {
         }
     }
 }
-void check_vis(int** G, int size, int* vis) {
+void check_vis(int** G, int size, int* vis, int s) {
+    DFS(G, size, vis, s);
     for (int i = 0; i < size; ++i) {
         if (vis[i]==0) {
             DFS(G, size, vis, i);
@@ -166,7 +168,8 @@ void DFSNR(int** G, int size, int* vis, int s) {
     free(st->data);
     free(st);
 }
-void check_visNR(int** G, int size, int* vis) {
+void check_visNR(int** G, int size, int* vis, int s) {
+    DFSNR(G, size, vis, s);
     for (int i = 0; i < size; ++i) {
         if (vis[i] == 0) {
             DFSNR(G, size, vis, i);
@@ -175,7 +178,8 @@ void check_visNR(int** G, int size, int* vis) {
     }
 }
 
-void check_visA(node** A, int size, int* vis) {
+void check_visA(node** A, int size, int* vis, int s) {
+    DFSA(A, vis, s);
     for (int i = 0; i < size; ++i) {
         if (vis[i] == 0) {
             DFSA(A, vis, i);
@@ -187,7 +191,8 @@ void check_visA(node** A, int size, int* vis) {
 int main() {
     setlocale(LC_ALL, "Rus");
     srand(time(NULL));
-    int n = 4;
+    int n = 10000;
+    int s = 0;
 
     int* vis = (int*)malloc(sizeof(int) * n);
     for (int i = 0; i < n; ++i) vis[i] = 0;
@@ -197,21 +202,23 @@ int main() {
 
     int** M1 = createG(n);
     printf("Граф G1\n");
-    printG(M1, n);
-    check_vis(M1, n, vis);
-    printf("\n");
+    //printG(M1, n);
+    printf("Введите вершину входа: ");
+    scanf("%d", &s);
+    check_vis(M1, n, vis, s);
+    printf("\nAdj\n");
 
-    node** A1 = createAdj(M1, n);
-    printf("Список смежности графа G1\n");
-    printAdj(A1, n);
-    for (int i = 0; i < n; ++i) vis[i] = 0;
-    check_visA(A1, n, vis);
-    for (int i = 0; i < n; ++i) vis[i] = 0;
-    printf("\n");
+    //node** A1 = createAdj(M1, n);
+    //printf("Список смежности графа G1\n");
+    //printAdj(A1, n);
+    //for (int i = 0; i < n; ++i) vis[i] = 0;
+    //check_visA(A1, n, vis, s);
+    //for (int i = 0; i < n; ++i) vis[i] = 0;
+    //printf("\nNR\n");
 
-    check_visNR(M1, n, vis);
+    //check_visNR(M1, n, vis, s);
 
     free(M1);
-    free(A1);
+    //free(A1);
     free(vis);
 }
